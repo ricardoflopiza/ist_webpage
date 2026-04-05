@@ -1,6 +1,5 @@
 project:
   type: website
-  output-dir: docs
 
 website:
   title: "Contacto"
@@ -9,3 +8,4 @@ format:
   html:
     css: styles.css
     toc: false
+    page-layout: full
