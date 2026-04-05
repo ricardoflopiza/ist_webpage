@@ -1,0 +1,73 @@
+---
+title: "Contacto"
+format:
+  html:
+    css: styles.css
+    page-layout: full
+    toc: false
+---
+
+<div class="hero">
+  <h1>Conversemos</h1>
+  <p>Impulsemos juntos culturas organizacionales más justas, inclusivas y sostenibles.</p>
+</div>
+
+<div class="container">
+
+<div class="bloque-contacto">
+
+## ¿En qué podemos ayudarte?
+
+<p class="intro">
+Acompañamos a organizaciones públicas y privadas en procesos de transformación cultural, 
+promoviendo la igualdad de género, la inclusión, la sostenibilidad y el respeto por los derechos humanos.
+</p>
+
+</div>
+
+<div class="grid">
+
+<div class="card">
+
+### 📩 Escríbenos
+
+<form class="formulario">
+  <input type="text" placeholder="Nombre" required>
+  <input type="email" placeholder="Correo electrónico" required>
+  <input type="text" placeholder="Organización">
+  <textarea placeholder="¿En qué podemos ayudarte?" rows="5"></textarea>
+  <button type="submit">Enviar mensaje</button>
+</form>
+
+</div>
+
+<div class="card">
+
+### 🤝 Nuestro enfoque
+
+<ul class="lista">
+  <li>Igualdad de género y liderazgo femenino</li>
+  <li>Diversidad e inclusión organizacional</li>
+  <li>Sostenibilidad con enfoque social</li>
+  <li>Derechos humanos y cumplimiento</li>
+</ul>
+
+<p class="nota">
+Trabajamos con un enfoque integral y personalizado, adaptado a las necesidades de cada organización.
+</p>
+
+</div>
+
+</div>
+
+<div class="bloque-final">
+
+### 🌱 Generemos impacto
+
+<p>
+Al colaborar con nosotras, no solo transformas tu organización, sino que también contribuyes a generar cambios positivos en la sociedad.
+</p>
+
+</div>
+
+</div>

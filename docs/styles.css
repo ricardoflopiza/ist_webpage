@@ -1,0 +1,140 @@
+:root {
+  --color-primary: #d7263d;
+    --color-secondary: #f4a261;
+    --color-soft: #f8f5f2;
+    --color-text: #2d2d2d;
+    --color-muted: #6f6672;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  color: var(--color-text);
+  background: var(--color-soft);
+  margin: 0;
+}
+
+/* HERO */
+  
+  .hero {
+    background: linear-gradient(135deg, #d7263d, #f4a261);
+                                color: white;
+                                text-align: center;
+                                padding: 80px 20px;
+  }
+
+.hero h1 {
+  font-size: 3rem;
+  margin-bottom: 10px;
+}
+
+.hero p {
+  font-size: 1.2rem;
+  opacity: 0.9;
+}
+
+/* CONTENEDOR */
+  
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+
+/* BLOQUES */
+  
+  .bloque-contacto {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+.intro {
+  color: var(--color-muted);
+  max-width: 700px;
+  margin: auto;
+}
+
+/* GRID */
+  
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+  }
+
+/* CARDS */
+  
+  .card {
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  }
+
+/* FORMULARIO */
+  
+  .formulario {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+.formulario input,
+.formulario textarea {
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(0,0,0,0.1);
+  font-size: 0.95rem;
+}
+
+.formulario button {
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.formulario button:hover {
+  background: #b81e32;
+}
+
+/* LISTA */
+  
+  .lista {
+    padding-left: 18px;
+  }
+
+.lista li {
+  margin-bottom: 8px;
+}
+
+/* TEXTO */
+  
+  .nota {
+    margin-top: 15px;
+    font-size: 0.9rem;
+    color: var(--color-muted);
+  }
+
+/* FINAL */
+  
+  .bloque-final {
+    text-align: center;
+    margin-top: 60px;
+    padding: 30px;
+  }
+
+/* RESPONSIVE */
+  
+  @media (max-width: 768px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .hero h1 {
+      font-size: 2rem;
+    }
+  }
