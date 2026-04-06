@@ -1,5 +1,5 @@
 ---
-title: "Contacto"
+title: ""
 format:
   html:
     css: styles.css
@@ -7,67 +7,221 @@ format:
     toc: false
 ---
 
-<div class="hero">
-  <h1>Conversemos</h1>
-  <p>Impulsemos juntos culturas organizacionales más justas, inclusivas y sostenibles.</p>
-</div>
+```{=html}
 
-<div class="container">
 
-<div class="bloque-contacto">
+<header class="hero section-full">
+  <div class="hero-bg"></div>
 
-## ¿En qué podemos ayudarte?
+  <div class="hero-inner">
+    <div class="logo-wrap">
+      <img src="logo.png" alt="Qué la Igualdad Sea Tendencia" class="logo-principal">
+    </div>
 
-<p class="intro">
-Acompañamos a organizaciones públicas y privadas en procesos de transformación cultural, 
-promoviendo la igualdad de género, la inclusión, la sostenibilidad y el respeto por los derechos humanos.
-</p>
+    <div class="hero-card">
+      <p class="eyebrow">Comunidad de prácticas</p>
 
-</div>
+      <h1>
+        Impulsamos culturas organizacionales más justas,
+        inclusivas y sostenibles
+      </h1>
 
-<div class="grid">
+      <p class="hero-text">
+        Acompañamos a organizaciones públicas y privadas en procesos de
+        transformación cultural con enfoque en igualdad de género,
+        diversidad e inclusión, sostenibilidad y derechos humanos.
+      </p>
 
-<div class="card">
+      <div class="hero-actions">
+        <a href="#contacto" class="btn btn-primary">Contáctanos</a>
+        <a href="#servicios" class="btn btn-secondary">Nuestros servicios</a>
+      </div>
+    </div>
+  </div>
+</header>
 
-### 📩 Escríbenos
+<main class="landing">
 
-<form class="formulario">
-  <input type="text" placeholder="Nombre" required>
-  <input type="email" placeholder="Correo electrónico" required>
-  <input type="text" placeholder="Organización">
-  <textarea placeholder="¿En qué podemos ayudarte?" rows="5"></textarea>
-  <button type="submit">Enviar mensaje</button>
-</form>
+<section id="proposito" class="section section-soft section-full">
+  <div class="main-container">
+    <div class="section-heading">
+      <span class="section-number">01</span>
+      <h2>Nuestro propósito</h2>
+      <p>
+        Promovemos culturas organizacionales más equitativas, libres de discriminación
+        y orientadas a la igualdad de oportunidades. Trabajamos con un enfoque integral,
+        personalizado y con impacto social.
+      </p>
+    </div>
 
-</div>
+    <div class="cards-grid cards-3">
+      <article class="card">
+        <h3>Transformación cultural</h3>
+        <p>
+          Diseñamos procesos que ayudan a instalar cambios sostenibles dentro
+          de las organizaciones.
+        </p>
+      </article>
 
-<div class="card">
+      <article class="card">
+        <h3>Sector público y privado</h3>
+        <p>
+          Acompañamos a instituciones y empresas, adaptando cada estrategia
+          a su realidad, lenguaje y objetivos.
+        </p>
+      </article>
 
-### 🤝 Nuestro enfoque
+      <article class="card">
+        <h3>Enfoque con sentido</h3>
+        <p>
+          Buscamos que cada proyecto genere mejoras internas y también un impacto
+          positivo más amplio en la sociedad.
+        </p>
+      </article>
+    </div>
+  </div>
+</section>
 
-<ul class="lista">
-  <li>Igualdad de género y liderazgo femenino</li>
-  <li>Diversidad e inclusión organizacional</li>
-  <li>Sostenibilidad con enfoque social</li>
-  <li>Derechos humanos y cumplimiento</li>
-</ul>
+<section id="servicios" class="section section-strong section-full">
+  <div class="main-container">
+    <div class="section-heading center heading-light">
+      <span class="section-number">02</span>
+      <h2>Nuestros servicios</h2>
+      <p>
+        Desarrollamos servicios en igualdad de género, diversidad e inclusión,
+        sostenibilidad y derechos humanos.
+      </p>
+    </div>
 
-<p class="nota">
-Trabajamos con un enfoque integral y personalizado, adaptado a las necesidades de cada organización.
-</p>
+    <div class="cards-grid cards-2">
+      <article class="card card-dark">
+        <h3>Igualdad de género</h3>
+        <p>
+          Implementación y mantención de estándares, políticas, prevención
+          de acoso y violencia, liderazgo femenino y formación.
+        </p>
+      </article>
 
-</div>
+      <article class="card card-dark">
+        <h3>Diversidad e inclusión</h3>
+        <p>
+          Diagnósticos DEI, políticas corporativas, protocolos, comités,
+          redes internas y sensibilización.
+        </p>
+      </article>
 
-</div>
+      <article class="card card-dark">
+        <h3>Sostenibilidad</h3>
+        <p>
+          Estrategias corporativas con perspectiva social, articulación
+          público-privada y vinculación con comunidades.
+        </p>
+      </article>
 
-<div class="bloque-final">
+      <article class="card card-dark">
+        <h3>Derechos humanos</h3>
+        <p>
+          Auditoría, implementación de prácticas, identificación de riesgos
+          y capacitación en estándares y cumplimiento.
+        </p>
+      </article>
+    </div>
+  </div>
+</section>
 
-### 🌱 Generemos impacto
+<section id="impacto" class="section section-soft-alt section-full">
+  <div class="main-container">
+    <div class="section-heading">
+      <span class="section-number">03</span>
+      <h2>Impacto y ventajas</h2>
+      <p>
+        Ayudamos a fortalecer la cultura organizacional, reducir riesgos
+        y generar reputación positiva.
+      </p>
+    </div>
 
-<p>
-Al colaborar con nosotras, no solo transformas tu organización, sino que también contribuyes a generar cambios positivos en la sociedad.
-</p>
+    <div class="cards-grid cards-2">
+      <article class="card">
+        <div class="badge">01</div>
+        <h3>Ventaja competitiva</h3>
+        <p>
+          La diversidad e inclusión fortalecen la innovación,
+          la creatividad y la atracción de talento.
+        </p>
+      </article>
 
-</div>
+      <article class="card">
+        <div class="badge">02</div>
+        <h3>Impacto positivo</h3>
+        <p>
+          Estas prácticas mejoran el bienestar y la justicia social,
+          promoviendo una distribución más responsable de recursos.
+        </p>
+      </article>
 
-</div>
+      <article class="card">
+        <div class="badge">03</div>
+        <h3>Cumplimiento y riesgo reducido</h3>
+        <p>
+          La prevención de discriminación, acoso y violencia fortalece
+          la cultura organizacional y reduce riesgos legales y psicosociales.
+        </p>
+      </article>
+
+      <article class="card">
+        <div class="badge">04</div>
+        <h3>Alternativas de precios</h3>
+        <p>
+          Ofrecemos alternativas acordes a los objetivos, necesidades
+          y presupuesto de cada organización.
+        </p>
+      </article>
+    </div>
+
+    <div class="impact-banner">
+      <h3>Transformar organizaciones también es transformar sociedad</h3>
+      <p>
+        Parte del trabajo de largo plazo se orienta también a acciones
+        de sensibilización e intervención con enfoque social.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section id="contacto" class="section section-contact section-full">
+  <div class="main-container">
+    <div class="contact-grid">
+      <div class="contact-copy">
+        <span class="section-number">04</span>
+        <h2>Hablemos</h2>
+        <p>
+          Si tu organización busca avanzar en igualdad, inclusión,
+          sostenibilidad o derechos humanos, conversemos.
+        </p>
+
+        <ul class="contact-list">
+          <li>Asesorías para instituciones públicas y privadas</li>
+          <li>Programas de formación y sensibilización</li>
+          <li>Diagnósticos, políticas y acompañamiento estratégico</li>
+          <li>Diseño de iniciativas con impacto social</li>
+        </ul>
+      </div>
+
+      <div class="contact-card">
+        <h3>Escríbenos</h3>
+
+        <form class="formulario">
+          <input type="text" placeholder="Nombre" required>
+          <input type="email" placeholder="Correo electrónico" required>
+          <input type="text" placeholder="Organización">
+          <textarea rows="5" placeholder="Cuéntanos qué necesitas"></textarea>
+          <button type="submit">Enviar mensaje</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+          
+```
