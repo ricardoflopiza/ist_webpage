@@ -1,0 +1,185 @@
+{% extends "public/base.html" %}
+
+{% block content %}
+<section class="hero">
+  <div class="wrap">
+    <span class="eyebrow">Diagnóstico y mejoramiento organizacional</span>
+    <h1>Convierte la opinión de tus equipos en decisiones organizacionales concretas</h1>
+    <p class="lead">
+      Evalúa el clima laboral, identifica fortalezas y riesgos, descubre qué factores
+      explican el compromiso y transforma los resultados en planes de mejora medibles.
+    </p>
+    <div class="actions">
+      <a class="btn primary" href="#contacto">Solicitar diagnóstico</a>
+      <a class="btn" href="#capacidades">Ver demostración</a>
+      <a class="btn ghost" href="/entrar">Acceder a la plataforma</a>
+    </div>
+    <div class="claim">
+      <strong>Un sistema de diagnóstico y mejoramiento organizacional basado en evidencia</strong>,
+      que permite medir el clima, identificar sus principales impulsores, proteger la
+      confidencialidad, priorizar intervenciones y hacer seguimiento a los compromisos de mejora.
+    </div>
+  </div>
+</section>
+
+<section class="section" id="problema">
+  <div class="wrap">
+    <span class="eyebrow">El problema</span>
+    <h2>Medir no es el problema. Lo que viene después, sí</h2>
+    <p class="lead">Estos son los puntos donde los procesos de clima suelen fallar.</p>
+    <div class="tiles">
+      {% for titulo, texto in problemas %}
+      <article class="tile"><h3>{{ titulo }}</h3><p>{{ texto }}</p></article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section alt" id="solucion">
+  <div class="wrap">
+    <span class="eyebrow">La solución</span>
+    <h2>Un ciclo completo, no una encuesta suelta</h2>
+    <div class="steps">
+      {% for titulo, texto in ciclo %}
+      <div class="step"><span class="n">{{ loop.index }}</span><h3>{{ titulo }}</h3><p class="small muted">{{ texto }}</p></div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section" id="capacidades">
+  <div class="wrap">
+    <span class="eyebrow">Capacidades</span>
+    <h2>Qué hace la plataforma</h2>
+    <div class="tiles">
+      {% for titulo, texto in capacidades %}
+      <article class="tile"><h3>{{ titulo }}</h3><p>{{ texto }}</p></article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section alt" id="servicios">
+  <div class="wrap">
+    <span class="eyebrow">Consultoría</span>
+    <h2>Servicios que se contratan además del software</h2>
+    <p class="lead">Los valores se ajustan al tamaño de la organización y al alcance del trabajo.</p>
+
+    <div class="tiles" style="margin-bottom:26px">
+      {% for p in paquetes %}
+      <article class="tile">
+        <h3>{{ p.name }}</h3>
+        <p>{{ p.summary }}</p>
+        <p class="price" style="margin-top:10px">{{ p.price_clp | clp }}</p>
+        {% if p.price_note %}<p class="small muted">{{ p.price_note }}</p>{% endif %}
+        <ul class="includes">{% for i in p.includes or [] %}<li>{{ i }}</li>{% endfor %}</ul>
+      </article>
+      {% endfor %}
+    </div>
+
+    <div class="tiles">
+      {% for s in servicios %}
+      <article class="tile"><h3>{{ s.name }}</h3><p>{{ s.summary }}</p>
+        <p class="small muted" style="margin-top:8px">{{ s.price_clp | clp }}</p></article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section" id="organizaciones">
+  <div class="wrap">
+    <span class="eyebrow">Tipos de organización</span>
+    <h2>Soluciones diferenciadas</h2>
+    <div class="tiles">
+      {% for titulo, texto in organizaciones %}
+      <article class="tile"><h3>{{ titulo }}</h3><p>{{ texto }}</p></article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section alt" id="metodologia">
+  <div class="wrap">
+    <span class="eyebrow">Metodología</span>
+    <h2>Ocho etapas, con responsables y entregables</h2>
+    <div class="steps">
+      {% for titulo, texto in metodologia %}
+      <div class="step"><span class="n">{{ loop.index }}</span><h3>{{ titulo }}</h3><p class="small muted">{{ texto }}</p></div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section" id="confidencialidad">
+  <div class="wrap">
+    <span class="eyebrow">Confidencialidad</span>
+    <h2>La confianza se construye con reglas verificables</h2>
+    <p class="lead">
+      La confidencialidad no es una promesa del contrato: está implementada en la base de
+      datos, en la API y en cada reporte.
+    </p>
+    <div class="tiles">
+      {% for titulo, texto in confidencialidad %}
+      <article class="tile"><h3>{{ titulo }}</h3><p>{{ texto }}</p></article>
+      {% endfor %}
+    </div>
+    <div class="note" style="margin-top:22px">
+      La plataforma evalúa clima y experiencia organizacional, y puede incorporar módulos
+      sobre condiciones psicosociales. No reemplaza los instrumentos regulatorios oficiales
+      ni entrega diagnósticos clínicos individuales.
+    </div>
+  </div>
+</section>
+
+<section class="section alt" id="contacto">
+  <div class="wrap">
+    <span class="eyebrow">Conversemos</span>
+    <h2>Solicita una reunión o una demostración</h2>
+
+    {% if enviado %}
+    <div class="note" style="margin:18px 0">
+      Recibimos tu solicitud. Te contactaremos al correo indicado.
+    </div>
+    {% endif %}
+
+    <form method="post" action="/contacto" class="card" style="margin-top:18px">
+      <div class="form-grid">
+        <div class="field"><label for="nombre">Nombre</label><input id="nombre" name="nombre" required></div>
+        <div class="field"><label for="organizacion">Organización</label><input id="organizacion" name="organizacion"></div>
+        <div class="field"><label for="cargo">Cargo</label><input id="cargo" name="cargo"></div>
+        <div class="field"><label for="correo">Correo</label><input id="correo" name="correo" type="email" required></div>
+        <div class="field">
+          <label for="tamano">Tamaño aproximado</label>
+          <select id="tamano" name="tamano">
+            <option value="">Seleccionar</option>
+            <option>Menos de 50 personas</option>
+            <option>50 a 150</option>
+            <option>151 a 300</option>
+            <option>301 a 1.000</option>
+            <option>Más de 1.000</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="necesidad">Tipo de necesidad</label>
+          <select id="necesidad" name="necesidad">
+            <option value="">Seleccionar</option>
+            <option>Diagnóstico de clima</option>
+            <option>Experiencia del trabajador</option>
+            <option>Evaluación de liderazgo</option>
+            <option>Seguridad psicológica</option>
+            <option>Convivencia e inclusión</option>
+            <option>Gestión del cambio</option>
+            <option>Seguimiento y pulsos</option>
+            <option>Otra</option>
+          </select>
+        </div>
+        <div class="field full">
+          <label for="mensaje">Mensaje</label>
+          <textarea id="mensaje" name="mensaje" rows="4" placeholder="Cuéntanos qué necesitas y en qué plazo"></textarea>
+        </div>
+      </div>
+      <button class="btn primary" type="submit">Enviar solicitud</button>
+    </form>
+  </div>
+</section>
+{% endblock %}

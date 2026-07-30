@@ -1,0 +1,141 @@
+{% extends "app/layout.html" %}
+{% block title %}{{ org.name }} · Inicio{% endblock %}
+
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap">
+  <div>
+    <h1>{{ org.name }}</h1>
+    <p class="muted">
+      {{ campaign.period_label if campaign else "Sin campañas" }}
+      {% if campaign %} · {{ campaign.name }} · <span class="badge">{{ campaign.status | replace('_', ' ') }}</span>{% endif %}
+    </p>
+  </div>
+  {% if campaigns | length > 1 %}
+  <form method="get" class="filters">
+    <div class="field">
+      <label for="campaign_id">Diagnóstico</label>
+      <select id="campaign_id" name="campaign_id" onchange="this.form.submit()">
+        {% for c in campaigns %}
+        <option value="{{ c.id }}" {% if campaign and c.id == campaign.id %}selected{% endif %}>{{ c.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </form>
+  {% endif %}
+</div>
+
+{% if not campaign %}
+<div class="card empty">
+  <h3>Todavía no hay diagnósticos</h3>
+  <p>Crea una campaña a partir de una plantilla de la biblioteca para comenzar a medir.</p>
+  <a class="btn primary" href="{{ base }}/campanas">Ir a campañas</a>
+</div>
+{% else %}
+
+{% set part = summary.payload.participation if summary else None %}
+<div class="grid g4" style="margin:18px 0">
+  <div class="kpi"><div class="label">Participación</div>
+    <div class="value">{{ part.rate | pct if part else "—" }}</div>
+    <div class="hint">{{ part.submitted if part else 0 }} de {{ part.invited if part else 0 }} invitaciones</div></div>
+  <div class="kpi"><div class="label">Resultado general</div>
+    <div class="value {{ summary.payload.general_score | band_class if summary }}">
+      {{ summary.payload.general_score | num if summary else "—" }}</div>
+    <div class="hint">Promedio de dimensiones de clima (0-100)</div></div>
+  <div class="kpi"><div class="label">Acciones activas</div><div class="value">{{ actions.total - actions.done }}</div>
+    <div class="hint">{{ actions.overdue }} atrasadas</div></div>
+  <div class="kpi"><div class="label">Cobertura</div><div class="value">{{ n_units }}</div>
+    <div class="hint">unidades · {{ n_people }} personas en nómina</div></div>
+</div>
+
+{% if not summary %}
+<div class="note warn">{{ decision.message if decision else "Resultados no disponibles." }}</div>
+{% else %}
+<div class="grid g3">
+  <div class="card">
+    <h3>Fortalezas principales</h3>
+    <table><tbody>
+      {% for d in summary.strengths %}
+      <tr><td>{{ d.name }}</td><td class="num score {{ d.score | band_class }}">{{ d.score | num }}</td></tr>
+      {% endfor %}
+    </tbody></table>
+  </div>
+  <div class="card">
+    <h3>Alertas principales</h3>
+    <table><tbody>
+      {% for d in summary.alerts %}
+      <tr><td>{{ d.name }}</td><td class="num score {{ d.score | band_class }}">{{ d.score | num }}</td></tr>
+      {% endfor %}
+    </tbody></table>
+  </div>
+  <div class="card">
+    <h3>Palancas prioritarias</h3>
+    <table><tbody>
+      {% for p in summary.levers %}
+      <tr><td>{{ p.name }}<br><span class="small muted">{{ p.quadrant | replace('_', ' ') }}</span></td>
+          <td class="num score {{ p.score | band_class }}">{{ p.score | num }}</td></tr>
+      {% else %}
+      <tr><td class="small muted">Se calculan con el análisis de impulsores.</td></tr>
+      {% endfor %}
+    </tbody></table>
+    <p class="small muted" style="margin-top:8px">Factores asociados, no causas comprobadas.</p>
+  </div>
+</div>
+
+<div class="grid g-side" style="margin-top:16px">
+  <div class="card">
+    <div class="card-head"><h2>Dimensiones</h2>
+      <a class="btn sm" href="{{ base }}/resultados">Ver detalle</a></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Dimensión</th><th class="num">Puntaje</th><th>Distribución</th>
+          <th class="num">n</th><th class="num">Variación</th><th class="num">Benchmark</th></tr></thead>
+        <tbody>
+        {% for d in summary.payload.dimensions %}
+        <tr>
+          <td>{{ d.name }}</td>
+          <td class="num score {{ d.score | band_class }}">{{ d.score | num }}</td>
+          <td>
+            <div class="stack" title="Favorable {{ d.favorable_pct | pct }} · Neutral {{ d.neutral_pct | pct }} · Desfavorable {{ d.unfavorable_pct | pct }}">
+              <span class="fav" style="width:{{ d.favorable_pct or 0 }}%"></span>
+              <span class="neu" style="width:{{ d.neutral_pct or 0 }}%"></span>
+              <span class="unf" style="width:{{ d.unfavorable_pct or 0 }}%"></span>
+            </div>
+          </td>
+          <td class="num">{{ d.n }}</td>
+          {% set delta = d.get('delta') %}
+          <td class="num">{% if delta is not none %}{{ '+' if delta > 0 else '' }}{{ delta | num }}{% else %}—{% endif %}</td>
+          <td class="num">{{ d.get('benchmark') | num }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div>
+    <div class="card">
+      <h3>Estado del plan de acción</h3>
+      <p class="small">{{ actions.done }} completadas · {{ actions.total - actions.done }} en curso ·
+        {% if actions.overdue %}<span class="badge danger">{{ actions.overdue }} atrasadas</span>{% else %}sin atrasos{% endif %}</p>
+      <a class="btn sm" href="{{ base }}/acciones">Ver plan</a>
+    </div>
+    <div class="card">
+      <h3>Próxima encuesta pulso</h3>
+      {% for p in pulses %}
+      <p class="small">{{ p.dimension_code or "General" }} · {{ p.cadence or "—" }}<br>
+        <span class="muted">Programada: {{ p.scheduled_for | fecha }}</span></p>
+      {% else %}
+      <p class="small muted">Sin pulsos programados.</p>
+      {% endfor %}
+      <a class="btn sm" href="{{ base }}/pulsos">Ver pulsos</a>
+    </div>
+    <div class="card">
+      <h3>Confidencialidad</h3>
+      <p class="small">Umbral vigente: <strong>{{ summary.payload.threshold or org.anonymity_threshold }} respuestas</strong>.
+        Los segmentos bajo ese umbral no se muestran ni se exportan.</p>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endif %}
+{% endblock %}

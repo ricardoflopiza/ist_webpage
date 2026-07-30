@@ -1,0 +1,50 @@
+{% extends "app/layout.html" %}
+{% block title %}{{ org.name }} · Pulsos{% endblock %}
+
+{% block content %}
+<h1>Encuestas pulso</h1>
+<p class="muted">Mediciones breves enganchadas a una dimensión, un hallazgo, un plan o una unidad.</p>
+
+<div class="card">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Pulso</th><th>Campaña</th><th>Estado</th><th>Cadencia</th>
+        <th>Programado</th><th>Línea base</th><th></th></tr></thead>
+      <tbody>
+      {% for p in pulses %}
+      {% set c = campaigns.get(p.campaign_id) %}
+      <tr>
+        <td><strong>{{ p.dimension_code or "General" }}</strong>
+          {% if p.notes %}<div class="small muted">{{ p.notes }}</div>{% endif %}</td>
+        <td class="small">{{ c.name if c else "—" }}</td>
+        <td><span class="badge">{{ c.status | replace('_',' ') if c else "—" }}</span></td>
+        <td class="small">{{ p.cadence or "—" }}</td>
+        <td class="small">{{ p.scheduled_for | fecha }}</td>
+        <td class="small muted">{{ campaigns.get(p.baseline_campaign_id).name if p.baseline_campaign_id and campaigns.get(p.baseline_campaign_id) else "—" }}</td>
+        <td><a class="btn sm" href="/api/v1/o/{{ org.slug }}/campaigns/pulses/{{ p.id }}/comparison">Comparar</a></td>
+      </tr>
+      {% else %}
+      <tr><td colspan="7" class="empty">
+        <h3>Sin pulsos configurados</h3>
+        <p>Un pulso sirve para verificar si los compromisos se están notando, no para
+           reemplazar el diagnóstico integral.</p>
+      </td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <h3>Preguntas típicas de seguimiento</h3>
+  <ul class="small">
+    <li>He observado avances concretos después de la encuesta.</li>
+    <li>Las acciones comprometidas han sido comunicadas.</li>
+    <li>La coordinación ha mejorado.</li>
+    <li>La carga de trabajo es más manejable.</li>
+    <li>Confío en que la organización continuará este proceso.</li>
+  </ul>
+  <p class="small muted">Con menos ítems y menor participación, un pulso indica dirección de
+    cambio. No sustituye una medición integral.</p>
+</div>
+{% endblock %}

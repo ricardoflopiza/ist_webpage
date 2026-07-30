@@ -1,0 +1,99 @@
+{% extends "survey/base.html" %}
+{% block title %}{{ campaign.name }} · {{ page.dimension }}{% endblock %}
+
+{% block content %}
+<div class="survey-head">
+  <div>
+    <span class="eyebrow">{{ org.name }}</span>
+    <div class="small muted">{{ campaign.name }}</div>
+  </div>
+  <div class="small muted">Sección {{ index + 1 }} de {{ n_pages }}</div>
+</div>
+
+<div class="progress"><span style="width: {{ progress }}%"></span></div>
+
+<h1 style="font-size:1.35rem">{{ page.dimension }}</h1>
+<p class="small muted">{{ page.module }}</p>
+
+<form method="post" action="/responder/{{ response.id }}/guardar" class="card">
+  <input type="hidden" name="_index" value="{{ index }}">
+
+  {% for q in page.questions %}
+  <div class="question">
+    <div class="text">
+      {{ q.text }}
+      {% if not q.required %}<span class="small muted">(opcional)</span>{% endif %}
+    </div>
+    {% if q.help_text %}<p class="small muted">{{ q.help_text }}</p>{% endif %}
+
+    {% set previo = answers.get(q.id) %}
+    {% if q.scale %}
+      <div class="options scale">
+        {% for label in q.scale.labels %}
+        {% set valor = q.scale.min_value + loop.index0 %}
+        <label class="option">
+          <input type="radio" name="q_{{ q.id }}" value="{{ valor }}"
+                 {% if previo and previo.value_num == valor %}checked{% endif %}
+                 {% if q.required %}required{% endif %}>
+          <span>{{ label }}</span>
+        </label>
+        {% endfor %}
+        {% if q.allow_na %}
+        <label class="option">
+          <input type="radio" name="q_{{ q.id }}" value="na" {% if previo and previo.is_na %}checked{% endif %}>
+          <span>No aplica</span>
+        </label>
+        {% endif %}
+      </div>
+    {% elif q.qtype == "single_choice" %}
+      <div class="options">
+        {% for opt in q.options or [] %}
+        <label class="option">
+          <input type="radio" name="q_{{ q.id }}" value="{{ opt }}"
+                 {% if previo and previo.value_text == opt %}checked{% endif %}>
+          <span>{{ opt }}</span>
+        </label>
+        {% endfor %}
+      </div>
+    {% elif q.qtype == "multi_choice" %}
+      <div class="options">
+        {% for opt in q.options or [] %}
+        <label class="option">
+          <input type="checkbox" name="q_{{ q.id }}" value="{{ opt }}"
+                 {% if previo and previo.value_json and opt in previo.value_json %}checked{% endif %}>
+          <span>{{ opt }}</span>
+        </label>
+        {% endfor %}
+      </div>
+    {% elif q.qtype == "yes_no" %}
+      <div class="options scale">
+        <label class="option"><input type="radio" name="q_{{ q.id }}" value="1"
+          {% if previo and previo.value_num == 1 %}checked{% endif %}><span>Sí</span></label>
+        <label class="option"><input type="radio" name="q_{{ q.id }}" value="0"
+          {% if previo and previo.value_num == 0 %}checked{% endif %}><span>No</span></label>
+      </div>
+    {% else %}
+      <textarea name="q_{{ q.id }}" rows="4"
+                placeholder="Escribe tu respuesta. Evita mencionar nombres de personas.">{{ previo.value_text if previo else "" }}</textarea>
+    {% endif %}
+  </div>
+  {% endfor %}
+
+  <div class="survey-actions">
+    {% if index > 0 %}
+    <button class="btn" type="submit" name="_action" value="prev">Anterior</button>
+    {% else %}<span></span>{% endif %}
+
+    {% if index + 1 < n_pages %}
+    <button class="btn primary" type="submit" name="_action" value="next">Guardar y continuar</button>
+    {% else %}
+    <button class="btn primary" type="submit" name="_action" value="submit">Enviar respuestas</button>
+    {% endif %}
+  </div>
+</form>
+
+<p class="small muted" style="margin-top:14px">
+  Tus respuestas se guardan al avanzar. Puedes cerrar y retomar desde este navegador en
+  <a href="/retomar">este enlace</a>.
+</p>
+{% endblock %}

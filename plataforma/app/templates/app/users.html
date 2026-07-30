@@ -1,0 +1,41 @@
+{% extends "app/layout.html" %}
+{% block title %}{{ org.name }} · Usuarios{% endblock %}
+
+{% block content %}
+<h1>Usuarios</h1>
+<p class="muted">Roles y alcance de cada persona con acceso a esta organización.</p>
+
+<div class="card">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Persona</th><th>Rol</th><th>Alcance</th><th class="num">Permisos</th><th>Estado</th></tr></thead>
+      <tbody>
+      {% for m in members %}
+      <tr>
+        <td><strong>{{ m.full_name or "—" }}</strong><div class="small muted">{{ m.email }}</div></td>
+        <td><span class="badge">{{ m.role }}</span></td>
+        <td class="small muted">
+          {% if m.scope_unit_ids %}{{ m.scope_unit_ids | length }} unidades{% else %}toda la organización{% endif %}
+        </td>
+        <td class="num">{{ m.permissions | length }}</td>
+        <td>{% if m.is_active %}<span class="badge ok">activo</span>{% else %}<span class="badge">inactivo</span>{% endif %}</td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <h3>Qué puede ver cada rol</h3>
+  <ul class="small">
+    <li><strong>Consultor:</strong> configura, analiza, valida hallazgos y ve comentarios sensibles bajo protocolo.</li>
+    <li><strong>Administrador del cliente:</strong> gestiona estructura, nómina, campañas y planes. No ve quién respondió qué ni comentarios sensibles.</li>
+    <li><strong>Jefatura:</strong> resultados de sus unidades sólo si alcanzan el umbral; actualiza avance de sus acciones.</li>
+    <li><strong>Analista:</strong> lee resultados y reportes; no modifica nada.</li>
+    <li><strong>Participante:</strong> responde encuestas y ve lo que la organización publique.</li>
+  </ul>
+  <p class="small muted">Ningún rol —tampoco el superadministrador— tiene acceso a respuestas
+    individuales identificables. La plataforma no guarda ese vínculo.</p>
+</div>
+{% endblock %}

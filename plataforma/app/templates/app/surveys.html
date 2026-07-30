@@ -1,0 +1,69 @@
+{% extends "app/layout.html" %}
+{% block title %}{{ org.name }} · Encuestas{% endblock %}
+
+{% block content %}
+<h1>Encuestas</h1>
+<p class="muted">Biblioteca de instrumentos y adaptaciones propias de esta organización.</p>
+
+<div class="card">
+  <div class="card-head"><h2>Biblioteca istendencia</h2>
+    <span class="small muted">Plantillas maestras: se adaptan duplicándolas</span></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Instrumento</th><th>Tipo</th><th>Versiones</th><th>Propósito</th><th></th></tr></thead>
+      <tbody>
+      {% for t in master %}
+      <tr>
+        <td><strong>{{ t.name }}</strong><div class="small muted">{{ t.code }}</div></td>
+        <td class="small">{{ t.kind }}</td>
+        <td class="small">
+          {% for v in t.versions %}<span class="tag">v{{ v.number }} · {{ v.status }}</span>{% endfor %}
+        </td>
+        <td class="small muted">{{ t.purpose or "—" }}</td>
+        <td><a class="btn sm" href="/api/v1/o/{{ org.slug }}/surveys/versions/{{ t.versions[-1].id }}/preview">Previsualizar</a></td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head"><h2>Instrumentos propios</h2>
+    <span class="small muted">Adaptaciones con trazabilidad al original</span></div>
+  {% if own %}
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Instrumento</th><th>Derivado de</th><th>Versiones</th><th></th></tr></thead>
+      <tbody>
+      {% for t in own %}
+      <tr>
+        <td><strong>{{ t.name }}</strong><div class="small muted">{{ t.code }}</div></td>
+        <td class="small muted">{{ t.derived_from_id or "creado desde cero" }}</td>
+        <td class="small">{% for v in t.versions %}<span class="tag">v{{ v.number }} · {{ v.status }}</span>{% endfor %}</td>
+        <td><a class="btn sm" href="/api/v1/o/{{ org.slug }}/surveys/versions/{{ t.versions[-1].id }}">Ver estructura</a></td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty">
+    <h3>Todavía no hay instrumentos propios</h3>
+    <p>Duplica una plantilla maestra para adaptarla al lenguaje de la organización sin
+       perder la referencia al instrumento original.</p>
+    <p class="small muted"><code>POST /api/v1/o/{{ org.slug }}/surveys/{id}/duplicate</code></p>
+  </div>
+  {% endif %}
+</div>
+
+<div class="card">
+  <h3>Reglas de versionado</h3>
+  <ul class="small">
+    <li>Una versión publicada es inmutable: para cambiar algo se crea una versión nueva.</li>
+    <li>Una campaña siempre apunta a una versión, nunca a la plantilla.</li>
+    <li>Sólo se comparan mediciones que usaron la misma versión.</li>
+    <li>Las plantillas maestras no se editan desde una organización: se duplican.</li>
+  </ul>
+</div>
+{% endblock %}

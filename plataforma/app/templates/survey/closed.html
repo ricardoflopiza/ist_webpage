@@ -1,0 +1,13 @@
+{% extends "survey/base.html" %}
+{% block title %}Encuesta cerrada{% endblock %}
+
+{% block content %}
+<div class="card" style="text-align:center;padding:40px 24px">
+  <span class="eyebrow">{{ org.name }}</span>
+  <h1>Esta encuesta ya no está abierta</h1>
+  <p class="lead" style="margin:0 auto">
+    El período de aplicación de «{{ campaign.name }}» terminó. Si crees que se trata de un
+    error, contacta a quien te envió la invitación.
+  </p>
+</div>
+{% endblock %}

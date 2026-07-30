@@ -1,0 +1,68 @@
+{% extends "app/layout.html" %}
+{% block title %}{{ org.name }} · Participación{% endblock %}
+
+{% block content %}
+<h1>Participación</h1>
+<p class="muted">{{ campaign.name if campaign else "Sin campañas" }}</p>
+
+{% if campaigns | length > 1 %}
+<form method="get" class="filters card" style="margin-bottom:16px">
+  <div class="field"><label for="campaign_id">Campaña</label>
+    <select id="campaign_id" name="campaign_id" onchange="this.form.submit()">
+      {% for c in campaigns %}<option value="{{ c.id }}" {% if campaign and c.id == campaign.id %}selected{% endif %}>{{ c.name }} — {{ c.status | replace('_',' ') }}</option>{% endfor %}
+    </select></div>
+</form>
+{% endif %}
+
+{% if data %}
+<div class="grid g4" style="margin-bottom:16px">
+  <div class="kpi"><div class="label">Invitaciones</div><div class="value">{{ data.invited }}</div></div>
+  <div class="kpi"><div class="label">Iniciadas</div><div class="value">{{ data.started }}</div></div>
+  <div class="kpi"><div class="label">Enviadas</div><div class="value">{{ data.submitted }}</div></div>
+  <div class="kpi"><div class="label">Tasa de participación</div><div class="value">{{ data.rate | pct }}</div>
+    <div class="hint">Terminan {{ data.completion_rate | pct }} de quienes empiezan</div></div>
+</div>
+
+<div class="card">
+  <div class="card-head"><h2>Estado de las invitaciones</h2></div>
+  <div class="grid g4">
+    {% for estado, n in data.by_invitation_status.items() %}
+    <div class="kpi"><div class="label">{{ estado }}</div><div class="value">{{ n }}</div></div>
+    {% endfor %}
+  </div>
+  <p class="small muted" style="margin-top:10px">
+    Una invitación marcada como respondida no indica <em>qué</em> respuesta corresponde a esa
+    persona: la plataforma no guarda ese vínculo.
+  </p>
+</div>
+
+<div class="card">
+  <div class="card-head"><h2>Cobertura por unidad</h2>
+    <span class="small muted">Umbral aplicado: {{ data.threshold }} respuestas</span></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Unidad</th><th>Tipo</th><th class="num">Invitadas</th><th class="num">Respuestas</th>
+        <th class="num">Tasa</th><th>Avance</th></tr></thead>
+      <tbody>
+      {% for r in data.by_unit %}
+      <tr>
+        <td>{{ r.label }}</td>
+        <td class="muted small">{{ r.kind | replace('_',' ') if r.kind else "—" }}</td>
+        {% if r.suppressed %}
+        <td colspan="4" class="small muted">Grupo bajo el umbral: no se muestra su detalle.</td>
+        {% else %}
+        <td class="num">{{ r.invited }}</td>
+        <td class="num">{{ r.n }}</td>
+        <td class="num">{{ r.rate | pct }}</td>
+        <td><div class="bar-track"><div class="bar-fill" style="width:{{ r.rate or 0 }}%"></div></div></td>
+        {% endif %}
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% else %}
+<div class="card empty"><h3>Sin datos de participación</h3><p>Crea una campaña y genera invitaciones.</p></div>
+{% endif %}
+{% endblock %}

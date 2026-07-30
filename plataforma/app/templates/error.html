@@ -1,0 +1,18 @@
+{% extends "public/base.html" %}
+{% block title %}Error {{ status }} · istendencia Clima{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="wrap" style="max-width:640px">
+    <span class="eyebrow">Error {{ status }}</span>
+    <h1>
+      {% if status == 403 %}No tienes permiso para ver esto
+      {% elif status == 404 %}No encontramos lo que buscas
+      {% elif status == 409 %}Esta acción no es posible ahora
+      {% else %}Algo no salió bien{% endif %}
+    </h1>
+    <p class="lead">{{ detail }}</p>
+    <p><a class="btn" href="/app">Volver a la plataforma</a> <a class="btn ghost" href="/">Ir al inicio</a></p>
+  </div>
+</section>
+{% endblock %}

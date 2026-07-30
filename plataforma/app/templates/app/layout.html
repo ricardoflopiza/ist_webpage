@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>{% block title %}{{ org.name if org else "istendencia Clima" }}{% endblock %}</title>
+  <link rel="stylesheet" href="/static/css/app.css">
+</head>
+<body>
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <a href="/app"><img src="/static/img/logo.png" alt="istendencia"></a>
+    </div>
+    <div class="product">Clima organizacional</div>
+
+    {% if org %}
+    <div class="org">
+      <strong>{{ org.name }}</strong>
+      <span class="small muted" style="color:#9aa1ae">{{ org.sector or "—" }} · umbral {{ org.anonymity_threshold }}</span>
+      {% if org.is_demo %}<div style="margin-top:6px"><span class="badge demo">Demostración</span></div>{% endif %}
+    </div>
+    {% endif %}
+
+    <nav>
+      {% if not org %}<a href="/app" class="active">Panel de la consultora</a>{% endif %}
+      {% for item in menu or [] %}
+      <a href="{{ base }}{{ '/' + item.path if item.path else '' }}"
+         class="{{ 'active' if active == item.key else '' }}">{{ item.label }}</a>
+      {% endfor %}
+    </nav>
+
+    <div class="foot">
+      {% if viewer %}
+      <div>{{ viewer.user.full_name }}</div>
+      <div class="small">{{ viewer.role or "plataforma" }}</div>
+      {% endif %}
+      <div style="margin-top:8px"><a href="/app">Organizaciones</a> · <a href="/salir">Salir</a></div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="crumbs">
+        <a href="/app">Plataforma</a>
+        {% if org %} / <a href="/app/o/{{ org.slug }}">{{ org.name }}</a>{% endif %}
+        {% block crumbs %}{% endblock %}
+      </div>
+      <div>{% block topactions %}{% endblock %}</div>
+    </div>
+
+    <div class="content">
+      {% if org and org.is_demo %}
+      <div class="note demo" style="margin-bottom:16px">
+        <strong>Organización de demostración.</strong> Todos los datos de «{{ org.name }}» son
+        simulados y están marcados como tales. No corresponden a ninguna organización real.
+      </div>
+      {% endif %}
+      {% block content %}{% endblock %}
+    </div>
+  </div>
+</div>
+{% block scripts %}{% endblock %}
+</body>
+</html>

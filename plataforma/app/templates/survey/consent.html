@@ -1,0 +1,45 @@
+{% extends "survey/base.html" %}
+{% block title %}{{ campaign.name }}{% endblock %}
+
+{% block content %}
+<div class="survey-head">
+  <div>
+    <span class="eyebrow">{{ org.name }}</span>
+    <h1 style="margin:4px 0 0">{{ campaign.name }}</h1>
+  </div>
+  {% if campaign.is_demo %}<span class="badge demo">Datos de demostración</span>{% endif %}
+</div>
+
+<div class="card">
+  {% if campaign.welcome_text %}<p>{{ campaign.welcome_text }}</p>{% endif %}
+
+  <h2>Antes de comenzar</h2>
+  <p>{{ campaign.consent_text or
+      "Tu participación es voluntaria y anónima. Las respuestas se analizan de forma
+       agregada y no se entregan resultados de grupos pequeños. La organización no puede
+       saber quién respondió qué." }}</p>
+
+  <ul class="small">
+    <li><strong>Duración estimada:</strong> {{ minutes or 10 }} minutos, {{ n_pages }} secciones.</li>
+    <li><strong>Puedes pausar:</strong> lo respondido se guarda a medida que avanzas y puedes
+        retomar desde este mismo navegador.</li>
+    <li><strong>No hay respuestas correctas:</strong> nos interesa tu percepción real.</li>
+    <li><strong>Confidencialidad:</strong> no se muestran resultados de grupos con menos de
+        {{ org.anonymity_threshold }} respuestas.</li>
+    <li><strong>Comentarios abiertos:</strong> evita escribir nombres propios; si aparecen datos
+        personales, se ocultan antes de cualquier análisis.</li>
+  </ul>
+
+  <div class="note" style="margin:16px 0">
+    Esta encuesta mide clima y experiencia organizacional. No es una evaluación clínica
+    individual ni reemplaza los canales formales de denuncia de tu organización.
+  </div>
+
+  <form method="post" action="/responder/{{ response.id }}/consentimiento">
+    <button class="btn primary" type="submit">Entiendo y quiero participar</button>
+  </form>
+  <p class="small muted" style="margin-top:10px">
+    Versión del consentimiento: {{ campaign.consent_version }}
+  </p>
+</div>
+{% endblock %}

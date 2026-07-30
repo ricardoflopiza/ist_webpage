@@ -1,0 +1,30 @@
+[project]
+name = "istendencia-clima"
+version = "0.1.0"
+description = "Plataforma multitenant de diagnóstico y mejoramiento del clima organizacional"
+requires-python = ">=3.12"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+filterwarnings = [
+    "error::RuntimeWarning",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+exclude = [".venv", "app/static"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "C4"]
+ignore = [
+    "E501",   # el límite lo controla line-length y hay textos largos en español
+    "B008",   # Depends() en argumentos por defecto es el idioma de FastAPI
+    "UP009",  # la cabecera de codificación se mantiene por consistencia con reportes-web
+]
+
+[tool.ruff.lint.per-file-ignores]
+"app/models/__init__.py" = ["F401"]
+"tests/*" = ["E402"]
+"tests/conftest.py" = ["E402", "I001"]

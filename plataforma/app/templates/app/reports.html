@@ -1,0 +1,69 @@
+{% extends "app/layout.html" %}
+{% block title %}{{ org.name }} · Reportes{% endblock %}
+
+{% block content %}
+<h1>Reportes</h1>
+<p class="muted">Tres audiencias, un mismo cálculo. Todos respetan permisos y umbral de anonimato.</p>
+
+{% if not campaign %}
+<div class="card empty"><h3>Sin campañas con resultados</h3></div>
+{% else %}
+<form method="get" class="card filters" style="margin-bottom:16px">
+  <div class="field"><label for="campaign_id">Campaña</label>
+    <select id="campaign_id" name="campaign_id" onchange="this.form.submit()">
+      {% for c in campaigns %}<option value="{{ c.id }}" {% if c.id == campaign.id %}selected{% endif %}>{{ c.name }}</option>{% endfor %}
+    </select></div>
+</form>
+
+<div class="grid g3">
+  <div class="card">
+    <h3>Reporte ejecutivo</h3>
+    <p class="small">Conclusiones, fortalezas, alertas, palancas, evolución y estado del plan.</p>
+    <a class="btn" href="/api/v1/o/{{ org.slug }}/reports/{{ campaign.id }}/executive">Ver</a>
+  </div>
+  <div class="card">
+    <h3>Reporte organizacional</h3>
+    <p class="small">Metodología, ficha técnica, resultados detallados, segmentaciones,
+      impulsores y limitaciones.</p>
+    <a class="btn" href="/api/v1/o/{{ org.slug }}/reports/{{ campaign.id }}/organizational">Ver</a>
+  </div>
+  <div class="card">
+    <h3>Datos autorizados</h3>
+    <p class="small">Exportación en CSV de los agregados que tu rol puede ver. La descarga
+      queda registrada en la auditoría.</p>
+    <a class="btn" href="/api/v1/o/{{ org.slug }}/reports/{{ campaign.id }}/export.csv">Descargar CSV</a>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head"><h2>Reportes de equipo</h2>
+    <span class="small muted">Sólo unidades que alcanzan el umbral</span></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Unidad</th><th>Tipo</th><th class="num">Dotación</th><th></th></tr></thead>
+      <tbody>
+      {% for u in units %}
+      <tr>
+        <td>{{ u.name }}</td>
+        <td class="small muted">{{ u.kind | replace('_',' ') }}</td>
+        <td class="num">{{ u.headcount or "—" }}</td>
+        <td><a class="btn sm" href="/api/v1/o/{{ org.slug }}/reports/{{ campaign.id }}/team/{{ u.id }}">Ver reporte</a></td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <h3>Qué incluye la ficha metodológica</h3>
+  <ul class="small">
+    <li>Normalización 0-100 y criterio de favorabilidad.</li>
+    <li>Tratamiento de ítems invertidos y de «No aplica».</li>
+    <li>Cobertura mínima para calcular una dimensión.</li>
+    <li>Umbral de confidencialidad aplicado.</li>
+    <li>Limitaciones: datos transversales, autoinformados y sin inferencia causal.</li>
+  </ul>
+</div>
+{% endif %}
+{% endblock %}

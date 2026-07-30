@@ -1,0 +1,148 @@
+{% extends "app/layout.html" %}
+{% block title %}{{ org.name }} · Resultados{% endblock %}
+
+{% block content %}
+<h1>Resultados</h1>
+<p class="muted">
+  {% if campaign %}{{ campaign.name }} · {{ campaign.period_label or "—" }}{% else %}Sin campañas con resultados{% endif %}
+</p>
+
+{% if not campaign %}
+<div class="card empty">
+  <h3>Aún no hay resultados</h3>
+  <p>Los resultados se calculan cuando la campaña se cierra. Mientras esté abierta sólo se
+     puede seguir la participación.</p>
+  <a class="btn" href="{{ base }}/participacion">Ver participación</a>
+</div>
+{% else %}
+
+<form class="card filters" style="margin-bottom:16px" onsubmit="return false">
+  <div class="field">
+    <label for="f-campaign">Campaña</label>
+    <select id="f-campaign" onchange="location.href='?campaign_id='+this.value">
+      {% for c in campaigns %}
+      <option value="{{ c.id }}" {% if c.id == campaign.id %}selected{% endif %}>{{ c.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="field">
+    <label for="f-unit">Unidad</label>
+    <select id="f-unit" data-filter="org_unit_id">
+      <option value="">Toda la organización</option>
+      {% for u in units %}<option value="{{ u.id }}">{{ u.name }} ({{ u.kind | replace('_',' ') }})</option>{% endfor %}
+    </select>
+  </div>
+  {% for key, values in segmentation.items() %}
+  <div class="field">
+    <label for="f-{{ key }}">{{ key | capitalize }}</label>
+    <select id="f-{{ key }}" data-filter="{{ key }}">
+      <option value="">Todas</option>
+      {% for v in values %}<option value="{{ v }}">{{ v }}</option>{% endfor %}
+    </select>
+  </div>
+  {% endfor %}
+  <button class="btn" id="limpiar-filtros" type="button">Limpiar</button>
+</form>
+
+<p class="small muted" id="filtro-activo"></p>
+
+<div id="resultados" style="display:none">
+  <div class="grid g4" style="margin:14px 0">
+    <div class="kpi"><div class="label">Participación</div><div class="value" id="kpi-participacion">—</div>
+      <div class="hint" id="kpi-participacion-hint"></div></div>
+    <div class="kpi"><div class="label">Resultado general</div><div class="value" id="kpi-general">—</div>
+      <div class="hint">Promedio de dimensiones de clima (0-100)</div></div>
+    <div class="kpi"><div class="label">Respuestas del segmento</div><div class="value" id="kpi-n">—</div></div>
+    <div class="kpi"><div class="label">Umbral aplicado</div><div class="value" id="kpi-umbral">—</div>
+      <div class="hint">Mínimo de respuestas para mostrar un segmento</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><h2>Variables de resultado</h2>
+      <span class="small muted">Se analizan aparte de las dimensiones de clima</span></div>
+    <div class="grid g4" id="outcomes"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><h2>Índices agregados</h2>
+      <span class="small muted">Agrupaciones propuestas, pendientes de validación psicométrica</span></div>
+    <div class="grid g3" id="indices"></div>
+    <div class="note" style="margin-top:12px">
+      Estos índices agrupan dimensiones por hipótesis conceptual. No son constructos
+      validados: antes de usarlos como indicadores de gestión conviene revisar su
+      consistencia interna y su estructura factorial con los datos de la organización.
+    </div>
+  </div>
+
+  <div class="grid g2">
+    <div class="card">
+      <div class="card-head"><h2>Dimensiones</h2><span class="small muted">Escala 0-100</span></div>
+      <div class="chart tall" id="chart-dimensiones"></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h2>Distribución de respuestas</h2>
+        <span class="small muted">Favorable / neutral / desfavorable</span></div>
+      <div class="chart tall" id="chart-distribucion"></div>
+    </div>
+  </div>
+
+  <div class="grid g2">
+    <div class="card">
+      <div class="card-head">
+        <h2>Análisis de impulsores</h2>
+        <select id="driver-outcome" style="width:auto"></select>
+      </div>
+      <div class="chart" id="chart-impulsores"></div>
+      <div id="drivers-warnings"></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h2>Matriz de prioridad</h2></div>
+      <div class="chart" id="chart-matriz"></div>
+      <p class="small muted" id="matriz-nota"></p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><h2>Tabla detallada</h2>
+      <a class="btn sm" href="/api/v1/o/{{ org.slug }}/reports/{{ campaign.id }}/export.csv">Exportar CSV</a></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th>Dimensión</th><th class="num">Puntaje</th><th class="num">Favorable</th>
+          <th class="num">Neutral</th><th class="num">Desfav.</th><th class="num">n</th>
+          <th class="num">IC 95 %</th><th class="num">Desv.</th><th class="num">Polarización</th>
+          <th class="num">Variación</th><th class="num">Benchmark</th>
+        </tr></thead>
+        <tbody id="tabla-dimensiones"></tbody>
+      </table>
+    </div>
+    <div id="benchmark-fuente" style="margin-top:10px"></div>
+    <p class="small muted" style="margin-top:8px">
+      Puntaje 0-100: ((valor − mínimo) / rango) × 100. Favorable = 4 y 5; neutral = 3;
+      desfavorable = 1 y 2. Los ítems invertidos se recodifican antes de promediar.
+      La polarización (0 a 1) indica cuánto se reparte la opinión entre extremos.
+    </p>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><h2>Mapa de calor por unidad</h2>
+      <a class="btn sm" href="/api/v1/o/{{ org.slug }}/results/{{ campaign.id }}/heatmap">Ver datos</a></div>
+    <p class="small muted">
+      Las unidades bajo el umbral aparecen suprimidas. Si al ocultarlas quedara una sola
+      unidad visible, esa también se oculta: se deduciría por diferencia.
+    </p>
+  </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+{% if campaign %}
+<script src="/static/js/echarts.min.js"></script>
+<script>
+  document.body.dataset.base = "/api/v1/o/{{ org.slug }}";
+  document.body.dataset.campaign = "{{ campaign.id }}";
+</script>
+<script src="/static/js/dashboard.js"></script>
+{% endif %}
+{% endblock %}

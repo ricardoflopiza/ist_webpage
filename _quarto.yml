@@ -1,5 +1,9 @@
 project:
   type: website
+  render:
+    # Sólo la portada institucional. `plataforma/` es una aplicación aparte y su
+    # documentación es interna: sin esta lista, Quarto publicaría esos .md en el sitio.
+    - index.qmd
 
 website:
   title: "Qué la Igualdad Sea Tendencia"

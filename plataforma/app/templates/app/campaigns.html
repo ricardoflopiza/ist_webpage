@@ -1,0 +1,62 @@
+{% extends "app/layout.html" %}
+{% block title %}{{ org.name }} · Campañas{% endblock %}
+
+{% block content %}
+<h1>Campañas</h1>
+<p class="muted">Cada campaña aplica una versión publicada del instrumento y no puede
+  cambiarla una vez activa.</p>
+
+<div class="card">
+  <div class="card-head"><h2>Diagnósticos y pulsos</h2>
+    <span class="small muted">{{ campaigns | length }} campañas</span></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Campaña</th><th>Período</th><th>Estado</th><th>Acceso</th>
+        <th class="num">Invitadas</th><th class="num">Respuestas</th><th class="num">Participación</th><th></th></tr></thead>
+      <tbody>
+      {% for c in campaigns %}
+      {% set p = participation[c.id] %}
+      <tr>
+        <td><strong>{{ c.name }}</strong>
+          {% if c.is_pulse %} <span class="badge info">pulso</span>{% endif %}
+          {% if c.is_demo %} <span class="badge demo">demo</span>{% endif %}
+          <div class="small muted">{{ c.starts_on | fecha }} → {{ c.ends_on | fecha }}</div></td>
+        <td class="small">{{ c.period_label or "—" }}</td>
+        <td><span class="badge">{{ c.status | replace('_',' ') }}</span></td>
+        <td class="small muted">{{ c.access_method | replace('_',' ') }}</td>
+        <td class="num">{{ p.invited }}</td>
+        <td class="num">{{ p.submitted }}</td>
+        <td class="num">{{ p.rate | pct }}</td>
+        <td>
+          <a class="btn sm" href="{{ base }}/participacion?campaign_id={{ c.id }}">Participación</a>
+          {% if c.status in ("cerrada","en_analisis","resultados_publicados","en_seguimiento","archivada") %}
+          <a class="btn sm" href="{{ base }}/resultados?campaign_id={{ c.id }}">Resultados</a>
+          {% endif %}
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="8" class="empty">
+        <h3>Sin campañas</h3>
+        <p>Una campaña se crea eligiendo organización, plantilla, versión, población, fechas y
+           reglas de confidencialidad.</p>
+        <p class="small muted">Creación disponible por API:
+          <code>POST /api/v1/o/{{ org.slug }}/campaigns</code></p>
+      </td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <h3>Flujo de una campaña</h3>
+  <p class="small">
+    Borrador → en revisión → programada → activa → pausada → cerrada → en análisis →
+    resultados publicados → en seguimiento → archivada.
+  </p>
+  <p class="small muted">
+    Los resultados no se muestran mientras la campaña está abierta. La transición a
+    «cerrada» consolida el estado de las invitaciones sin vincularlas a las respuestas.
+  </p>
+</div>
+{% endblock %}

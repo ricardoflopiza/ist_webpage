@@ -1,0 +1,34 @@
+{% extends "app/layout.html" %}
+{% block title %}{{ org.name }} · Servicios{% endblock %}
+
+{% block content %}
+<h1>Servicios</h1>
+<p class="muted">Paquetes y servicios de consultoría disponibles. Los valores se administran
+  en pesos chilenos o quedan como «Cotizar».</p>
+
+<div class="grid g2">
+  {% for p in paquetes %}
+  <div class="card">
+    <div class="card-head"><h2>{{ p.name }}</h2><span class="price">{{ p.price_clp | clp }}</span></div>
+    <p class="small">{{ p.summary }}</p>
+    <ul class="includes">{% for i in p.includes or [] %}<li>{{ i }}</li>{% endfor %}</ul>
+    {% if p.price_note %}<p class="small muted">{{ p.price_note }}</p>{% endif %}
+  </div>
+  {% endfor %}
+</div>
+
+<div class="card">
+  <div class="card-head"><h2>Servicios individuales</h2></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Servicio</th><th>Descripción</th><th class="num">Valor</th></tr></thead>
+      <tbody>
+      {% for s in servicios %}
+      <tr><td><strong>{{ s.name }}</strong></td><td class="small muted">{{ s.summary }}</td>
+        <td class="num">{{ s.price_clp | clp }}</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

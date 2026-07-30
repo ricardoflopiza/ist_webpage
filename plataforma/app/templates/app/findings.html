@@ -1,0 +1,53 @@
+{% extends "app/layout.html" %}
+{% block title %}{{ org.name }} · Hallazgos{% endblock %}
+
+{% block content %}
+<h1>Hallazgos</h1>
+<p class="muted">Lectura consultiva de los resultados. Los hallazgos generados por el sistema
+  quedan marcados hasta que un consultor los valida.</p>
+
+<div class="card">
+  <div class="card-head"><h2>Registro</h2><span class="small muted">{{ findings | length }} hallazgos</span></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Hallazgo</th><th>Tipo</th><th>Dimensión</th><th>Prioridad</th>
+        <th>Estado</th><th>Campaña</th></tr></thead>
+      <tbody>
+      {% for f in findings %}
+      <tr>
+        <td><strong>{{ f.title }}</strong>
+          {% if f.interpretation %}<div class="small muted">{{ f.interpretation }}</div>{% endif %}
+          {% if f.recommendation %}<div class="small"><em>Recomendación:</em> {{ f.recommendation }}</div>{% endif %}
+          {% if f.limitations %}<div class="small muted"><em>Limitaciones:</em> {{ f.limitations }}</div>{% endif %}
+        </td>
+        <td><span class="badge {{ 'ok' if f.ftype == 'fortaleza' else 'danger' if f.ftype in ('alerta','riesgo') else 'info' }}">{{ f.ftype }}</span></td>
+        <td class="small muted">{{ f.dimension_code or "—" }}</td>
+        <td><span class="badge {{ 'danger' if f.priority == 'alta' else '' }}">{{ f.priority }}</span></td>
+        <td>
+          <span class="badge {{ 'ok' if f.status == 'validado' else 'warn' }}">{{ f.status | replace('_',' ') }}</span>
+          {% if f.is_system_generated %}<div class="small muted">generado por el sistema</div>{% endif %}
+        </td>
+        <td class="small muted">{{ campaigns.get(f.campaign_id, "—") }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="6" class="empty">
+        <h3>Sin hallazgos registrados</h3>
+        <p>Puedes generar borradores automáticos a partir de los resultados y luego validarlos.</p>
+        <p class="small muted"><code>POST /api/v1/o/{{ org.slug }}/findings/suggest/{campaign_id}</code></p>
+      </td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <h3>Criterio de priorización</h3>
+  <p class="small">
+    La matriz de prioridad sugiere un orden estadístico. La prioridad final la fija el
+    consultor considerando gravedad ética, riesgo legal, seguridad, factibilidad, costo,
+    urgencia y contexto. Una alerta de acoso, discriminación o violencia no baja de
+    prioridad por tener correlación baja con el compromiso.
+  </p>
+</div>
+{% endblock %}

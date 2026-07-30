@@ -1,0 +1,45 @@
+{% extends "app/layout.html" %}
+{% block title %}{{ org.name }} · Auditoría{% endblock %}
+
+{% block content %}
+<h1>Auditoría</h1>
+<p class="muted">Quién vio qué, qué exportó y qué se le denegó.</p>
+
+<div class="card">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Fecha</th><th>Acción</th><th>Persona</th><th>Entidad</th>
+        <th>Detalle</th><th>Origen</th><th>Resultado</th></tr></thead>
+      <tbody>
+      {% for r in rows %}
+      <tr>
+        <td class="small">{{ r.created_at | fecha }}</td>
+        <td class="small"><strong>{{ r.action | replace('_',' ') }}</strong></td>
+        <td class="small">{{ r.actor_email or "—" }}</td>
+        <td class="small muted">{{ r.entity or "—" }}</td>
+        <td class="small muted">{{ r.detail or "" }}</td>
+        <td class="small muted">{{ r.ip or "—" }}</td>
+        <td><span class="badge {{ 'danger' if r.result in ('denegado','excepcional') else 'ok' if r.result == 'ok' else 'warn' }}">{{ r.result }}</span></td>
+      </tr>
+      {% else %}
+      <tr><td colspan="7" class="empty">Sin registros todavía.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <h3>Qué se registra</h3>
+  <ul class="small">
+    <li>Ingresos y ingresos fallidos.</li>
+    <li>Consultas de resultados, con los filtros usados y si el segmento fue suprimido.</li>
+    <li>Lectura de comentarios y, uno a uno, de los comentarios sensibles.</li>
+    <li>Exportaciones de datos.</li>
+    <li>Cambios de configuración, publicación de versiones y de resultados.</li>
+    <li>Cualquier intento de acceso a información de otra organización.</li>
+  </ul>
+  <p class="small muted">La bitácora nunca guarda el texto de un comentario sensible: sólo su
+    identificador.</p>
+</div>
+{% endblock %}

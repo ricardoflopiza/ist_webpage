@@ -1,0 +1,68 @@
+{% extends "app/layout.html" %}
+{% block title %}{{ org.name }} · Planes de acción{% endblock %}
+
+{% block content %}
+<h1>Planes de acción</h1>
+<p class="muted">Compromisos con responsable, indicador, plazo y evidencia.</p>
+
+<div class="grid g4" style="margin-bottom:16px">
+  <div class="kpi"><div class="label">Acciones activas</div><div class="value">{{ data.active }}</div></div>
+  <div class="kpi"><div class="label">Atrasadas</div><div class="value">{{ data.overdue | length }}</div></div>
+  <div class="kpi"><div class="label">Avance promedio</div><div class="value">{{ (data.average_progress * 100) | round | int }}%</div></div>
+  <div class="kpi"><div class="label">Hallazgos sin acción</div><div class="value">{{ data.findings_without_action | length }}</div></div>
+</div>
+
+{% for plan in plans %}
+<div class="card">
+  <div class="card-head">
+    <div><h2>{{ plan.name }}</h2><p class="small muted">{{ plan.description or "" }}</p></div>
+    <span class="badge">{{ plan.status }}</span>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Acción</th><th>Responsable</th><th>Indicador / meta</th><th>Plazo</th>
+        <th>Estado</th><th class="num">Avance</th><th>Evidencia</th></tr></thead>
+      <tbody>
+      {% for i in plan.items %}
+      <tr>
+        <td><strong>{{ i.action }}</strong>
+          {% if i.problem %}<div class="small muted">Problema: {{ i.problem }}</div>{% endif %}
+          {% if i.objective %}<div class="small muted">Objetivo: {{ i.objective }}</div>{% endif %}
+          {% if i.finding_id %}<div class="small">Hallazgo: {{ findings.get(i.finding_id, "—") }}</div>{% endif %}
+          {% if i.risks %}<div class="small muted">Riesgos: {{ i.risks }}</div>{% endif %}
+        </td>
+        <td class="small">{{ i.owner_label or i.owner_user_id or "—" }}
+          {% if not (i.owner_label or i.owner_user_id) %}<span class="badge warn">sin responsable</span>{% endif %}</td>
+        <td class="small">{{ i.indicator or "—" }}{% if i.target %}<div class="muted">Meta: {{ i.target }}</div>{% endif %}</td>
+        <td class="small">{{ i.due_on | fecha }}
+          {% if i.is_overdue %}<div><span class="badge danger">atrasada</span></div>{% endif %}
+          {% if i.next_review_on %}<div class="muted">Revisión: {{ i.next_review_on | fecha }}</div>{% endif %}</td>
+        <td><span class="badge {{ 'ok' if i.status == 'completada' else 'danger' if i.status == 'bloqueada' else '' }}">{{ i.status | replace('_',' ') }}</span></td>
+        <td class="num">{{ (i.progress * 100) | round | int }}%
+          <div class="bar-track"><div class="bar-fill" style="width:{{ (i.progress * 100) | round | int }}%"></div></div></td>
+        <td class="small muted">{{ i.evidence or "—" }}</td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% else %}
+<div class="card empty">
+  <h3>Sin planes de acción</h3>
+  <p>Un diagnóstico sin plan de acción es la forma más rápida de perder credibilidad interna.</p>
+  <p class="small muted"><code>POST /api/v1/o/{{ org.slug }}/action-plans</code></p>
+</div>
+{% endfor %}
+
+{% if data.findings_without_action %}
+<div class="card">
+  <h3>Hallazgos sin acción asociada</h3>
+  <ul class="small">
+    {% for f in data.findings_without_action %}
+    <li>{{ f.title }} <span class="badge">{{ f.ftype }}</span> <span class="badge">{{ f.priority }}</span></li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+{% endblock %}

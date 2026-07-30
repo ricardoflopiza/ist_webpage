@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}istendencia · Clima organizacional{% endblock %}</title>
+  <meta name="description" content="Plataforma de diagnóstico y mejoramiento organizacional: mide el clima, identifica sus impulsores, protege la confidencialidad y hace seguimiento a los planes de acción.">
+  <link rel="stylesheet" href="/static/css/app.css">
+</head>
+<body class="public">
+  <header class="nav">
+    <a href="/"><img src="/static/img/logo.png" alt="istendencia"></a>
+    <div class="links">
+      <a href="/#solucion">Solución</a>
+      <a href="/#capacidades">Capacidades</a>
+      <a href="/#servicios">Servicios</a>
+      <a href="/#metodologia">Metodología</a>
+      <a href="/#confidencialidad">Confidencialidad</a>
+      <a href="/entrar" class="btn sm">Acceder a la plataforma</a>
+    </div>
+  </header>
+
+  {% block content %}{% endblock %}
+
+  <footer class="footer">
+    <div class="wrap">
+      <strong style="color:#fff">istendencia · Clima organizacional</strong>
+      <p style="margin-top:8px;max-width:70ch">
+        Plataforma de diagnóstico y mejoramiento organizacional. Mide clima y experiencia
+        organizacional y puede incorporar módulos sobre condiciones psicosociales.
+        <strong style="color:#d5d9e0">No reemplaza los instrumentos regulatorios oficiales</strong>
+        (en Chile, CEAL-SM/SUSESO) ni constituye diagnóstico clínico individual: los
+        resultados son organizacionales y grupales.
+      </p>
+      <p style="margin:0"><a href="/entrar">Acceder</a> · <a href="/#contacto">Contacto</a> · © {{ marca.anio }}</p>
+    </div>
+  </footer>
+</body>
+</html>

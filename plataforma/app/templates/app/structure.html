@@ -1,0 +1,45 @@
+{% extends "app/layout.html" %}
+{% block title %}{{ org.name }} · Estructura{% endblock %}
+
+{% block content %}
+<h1>Estructura y nómina</h1>
+<p class="muted">{{ units | length }} unidades · {{ n_people }} personas en la nómina.</p>
+
+<div class="card">
+  <div class="card-head"><h2>Unidades</h2>
+    <span class="small muted">Unidad de negocio · sede · departamento · equipo</span></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Unidad</th><th>Tipo</th><th>Código</th><th class="num">Dotación</th><th>Estado</th></tr></thead>
+      <tbody>
+      {% for u in units %}
+      <tr>
+        <td>{{ u.name }}</td>
+        <td class="small"><span class="badge">{{ u.kind | replace('_',' ') }}</span></td>
+        <td class="small muted">{{ u.code or "—" }}</td>
+        <td class="num">{{ u.headcount or "—" }}</td>
+        <td>{% if u.is_active %}<span class="badge ok">activa</span>{% else %}<span class="badge">inactiva</span>{% endif %}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5" class="empty"><h3>Sin estructura cargada</h3>
+        <p>Define unidades antes de crear la primera campaña: son la base de la segmentación.</p></td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <h3>Nómina</h3>
+  <p class="small">
+    La nómina es el universo invitable y vive separada de las respuestas. Al iniciar una
+    encuesta se copia una fotografía de las variables de segmentación autorizadas —sin
+    identidad— y ahí termina el vínculo.
+  </p>
+  <p class="small muted">
+    Carga masiva: <code>POST /api/v1/o/{{ org.slug }}/population/import</code> con un CSV
+    (<code>external_id</code>, <code>email</code>, <code>full_name</code>, <code>unidad</code>
+    y las columnas de segmentación que se quieran usar).
+  </p>
+</div>
+{% endblock %}

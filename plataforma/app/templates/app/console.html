@@ -1,0 +1,97 @@
+{% extends "app/layout.html" %}
+{% block title %}Panel de la consultora{% endblock %}
+
+{% block content %}
+<h1>Panel de la consultora</h1>
+<p class="muted">Estado de todos los clientes y sus diagnósticos.</p>
+
+<div class="grid g4" style="margin:18px 0">
+  <div class="kpi"><div class="label">Organizaciones activas</div><div class="value">{{ data.organizations_active }}</div></div>
+  <div class="kpi"><div class="label">Campañas activas</div><div class="value">{{ data.campaigns_active }}</div></div>
+  <div class="kpi"><div class="label">Personas invitadas</div><div class="value">{{ data.people_invited }}</div></div>
+  <div class="kpi"><div class="label">Respuestas recibidas</div><div class="value">{{ data.responses_received }}</div></div>
+  <div class="kpi"><div class="label">Participación media</div><div class="value">{{ data.average_participation | pct }}</div></div>
+  <div class="kpi"><div class="label">Diagnósticos por cerrar</div><div class="value">{{ data.closing_soon | length }}</div>
+    <div class="hint">Cierran en 7 días o menos</div></div>
+  <div class="kpi"><div class="label">Acciones atrasadas</div><div class="value">{{ data.overdue_actions }}</div></div>
+  <div class="kpi"><div class="label">Pulsos programados</div><div class="value">{{ data.scheduled_pulses }}</div></div>
+</div>
+
+<div class="card">
+  <div class="card-head"><h2>Embudo de servicio</h2><span class="small muted">Clientes por etapa</span></div>
+  <div class="grid g4">
+    {% for etapa, n in data.funnel.items() %}
+    <div class="kpi"><div class="label">{{ etapa | replace('_', ' ') }}</div><div class="value">{{ n }}</div></div>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="grid g-side" style="margin-top:16px">
+  <div class="card">
+    <div class="card-head"><h2>Organizaciones</h2></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th>Organización</th><th>Sector</th><th>Etapa</th><th class="num">Campañas</th>
+          <th class="num">Participación</th><th class="num">Acciones abiertas</th><th class="num">Atrasadas</th><th></th>
+        </tr></thead>
+        <tbody>
+        {% for o in data.organizations %}
+        <tr>
+          <td><strong>{{ o.name }}</strong>{% if o.is_demo %} <span class="badge demo">demo</span>{% endif %}</td>
+          <td class="muted">{{ o.sector or "—" }}</td>
+          <td><span class="badge">{{ o.stage | replace('_', ' ') }}</span></td>
+          <td class="num">{{ o.campaigns }}</td>
+          <td class="num">{{ o.participation | pct }}</td>
+          <td class="num">{{ o.open_actions }}</td>
+          <td class="num">{% if o.overdue_actions %}<span class="badge danger">{{ o.overdue_actions }}</span>{% else %}0{% endif %}</td>
+          <td><a class="btn sm" href="/app/o/{{ o.slug }}">Abrir</a></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="8" class="empty">Aún no hay organizaciones. Crea la primera desde la API o el panel de plataforma.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div>
+    <div class="card">
+      <h3>Alertas operativas</h3>
+      {% if data.low_participation %}
+      <p class="small strong">Participación bajo 50 %</p>
+      <ul class="small">{% for o in data.low_participation %}<li>{{ o.name }} — {{ o.participation | pct }}</li>{% endfor %}</ul>
+      {% endif %}
+      {% if data.without_action_plan %}
+      <p class="small strong">Sin plan de acción</p>
+      <ul class="small">{% for o in data.without_action_plan %}<li>{{ o.name }}</li>{% endfor %}</ul>
+      {% endif %}
+      {% if data.closing_soon %}
+      <p class="small strong">Próximos hitos</p>
+      <ul class="small">{% for c in data.closing_soon %}<li>{{ c.name }} cierra el {{ c.ends_on }}</li>{% endfor %}</ul>
+      {% endif %}
+      {% if not (data.low_participation or data.without_action_plan or data.closing_soon) %}
+      <p class="small muted">Sin alertas por ahora.</p>
+      {% endif %}
+    </div>
+
+    <div class="card">
+      <h3>Actividad reciente</h3>
+      <table>
+        <tbody>
+        {% for a in activity %}
+        <tr>
+          <td class="small">{{ a.at | fecha }}</td>
+          <td class="small">{{ a.action | replace('_', ' ') }}<br><span class="muted">{{ a.actor or "—" }}</span></td>
+        </tr>
+        {% else %}
+        <tr><td class="small muted">Sin actividad registrada.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<p class="small muted" style="margin-top:14px">{{ data.note }}</p>
+{% endblock %}

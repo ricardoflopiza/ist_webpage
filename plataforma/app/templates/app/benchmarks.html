@@ -1,0 +1,46 @@
+{% extends "app/layout.html" %}
+{% block title %}{{ org.name }} · Benchmarks{% endblock %}
+
+{% block content %}
+<h1>Benchmarks</h1>
+<p class="muted">Referencias comparativas construidas con datos agregados y anonimizados.</p>
+
+<div class="card">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Referencia</th><th>Alcance</th><th>Instrumento</th>
+        <th class="num">Organizaciones</th><th class="num">Respuestas</th><th>Período</th></tr></thead>
+      <tbody>
+      {% for b in benchmarks %}
+      <tr>
+        <td><strong>{{ b.name }}</strong>{% if b.is_demo %} <span class="badge demo">demo</span>{% endif %}
+          {% if b.limitations %}<div class="small muted">{{ b.limitations }}</div>{% endif %}</td>
+        <td class="small">{{ b.scope_kind }}{% if b.sector %} · {{ b.sector }}{% endif %}</td>
+        <td class="small muted">{{ b.template_code }} v{{ b.version_number or "—" }}</td>
+        <td class="num">{{ b.n_organizations }}</td>
+        <td class="num">{{ b.n_responses }}</td>
+        <td class="small">{{ b.period_label or "—" }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="6" class="empty"><h3>Sin benchmarks publicados</h3>
+        <p>Se construyen con al menos tres organizaciones que hayan dado consentimiento.</p></td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <h3>Reglas de comparación</h3>
+  <ul class="small">
+    <li>Sólo se comparan campañas de la misma plantilla y versión del instrumento.</li>
+    <li>Una organización aporta sólo si autorizó explícitamente su inclusión.</li>
+    <li>Mínimo de organizaciones y respuestas para que el agregado no identifique a nadie.</li>
+    <li>Cada referencia declara criterios de inclusión, período y limitaciones.</li>
+  </ul>
+  <p class="small">
+    Consentimiento de esta organización:
+    {% if org.benchmark_consent %}<span class="badge ok">autorizado</span>{% else %}<span class="badge">no autorizado</span>{% endif %}
+  </p>
+</div>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends "app/layout.html" %}
+{% block title %}{{ org.name }} · Configuración{% endblock %}
+
+{% block content %}
+<h1>Configuración</h1>
+
+<div class="grid g2">
+  <div class="card">
+    <h2>Confidencialidad</h2>
+    <div class="field"><label>Umbral de anonimato</label>
+      <input value="{{ org.anonymity_threshold }}" disabled></div>
+    <p class="small muted">Mínimo de respuestas para mostrar cualquier segmento. Una campaña
+      puede endurecerlo, nunca bajarlo. Al cruzar más de dos variables el umbral sube un 50 %.</p>
+
+    <div class="field"><label>Cobertura mínima de ítems por dimensión</label>
+      <input value="{{ (org.min_item_completion * 100) | round | int }}%" disabled></div>
+    <p class="small muted">Porcentaje de ítems que una persona debe responder para que su
+      puntaje de esa dimensión se calcule.</p>
+
+    <div class="field"><label>Aporte a benchmarks</label>
+      <input value="{{ 'Autorizado' if org.benchmark_consent else 'No autorizado' }}" disabled></div>
+  </div>
+
+  <div class="card">
+    <h2>Ficha</h2>
+    <div class="field"><label>Nombre</label><input value="{{ org.name }}" disabled></div>
+    <div class="field"><label>Razón social</label><input value="{{ org.legal_name or '' }}" disabled></div>
+    <div class="field"><label>Sector</label><input value="{{ org.sector or '' }}" disabled></div>
+    <div class="field"><label>Tipo</label><input value="{{ org.org_type or '' }}" disabled></div>
+    <div class="field"><label>Región</label><input value="{{ org.region or '' }}" disabled></div>
+    <div class="field"><label>Tamaño</label><input value="{{ org.size_bucket or '' }}" disabled></div>
+    <div class="field"><label>Plan</label><input value="{{ org.plan }}" disabled></div>
+    <p class="small muted">Edición por API: <code>PATCH /api/v1/o/{{ org.slug }}</code></p>
+  </div>
+</div>
+
+<div class="card">
+  <h3>Retención y eliminación</h3>
+  <p class="small">
+    Las respuestas se conservan mientras dure la relación con el cliente y se anonimizan o
+    eliminan a solicitud. Las invitaciones guardan sólo el hash del token; los comentarios
+    guardan una versión con datos personales ocultos. La bitácora de auditoría registra
+    accesos y exportaciones.
+  </p>
+</div>
+{% endblock %}

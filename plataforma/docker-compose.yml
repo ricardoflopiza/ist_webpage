@@ -1,0 +1,52 @@
+# Despliegue de la plataforma de clima organizacional.
+#
+# Sigue las convenciones del resto de servicios istendencia en pop-two:
+# el puerto sólo escucha en 127.0.0.1 y la exposición pública la hace Caddy
+# detrás del Cloudflare Tunnel. Nada de secretos aquí: van en el .env.
+services:
+  clima-db:
+    image: postgres:17-alpine
+    container_name: istendencia-clima-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?falta POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?falta POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-clima}
+    volumes:
+      - clima-pgdata:/var/lib/postgresql/data
+      - ./backups:/backups
+    ports:
+      - "127.0.0.1:5434:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    mem_limit: 2g
+
+  clima-app:
+    build: .
+    container_name: istendencia-clima
+    restart: unless-stopped
+    depends_on:
+      clima-db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@clima-db:5432/${POSTGRES_DB:-clima}
+      SESSION_SECRET: ${SESSION_SECRET:?falta SESSION_SECRET}
+      SECURE_COOKIES: "1"
+      ENVIRONMENT: production
+      PUBLIC_BASE_URL: ${PUBLIC_BASE_URL:?falta PUBLIC_BASE_URL}
+      SEED_DEMO: ${SEED_DEMO:-0}
+      DEFAULT_ANONYMITY_THRESHOLD: ${DEFAULT_ANONYMITY_THRESHOLD:-7}
+      # Primer superadministrador (opcional; alternativa: python -m app.cli crear-admin)
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      ADMIN_NAME: ${ADMIN_NAME:-}
+    ports:
+      - "127.0.0.1:8003:8003"          # nunca directo a internet: sale por Caddy
+    mem_limit: 1g
+    cpus: 1.5
+
+volumes:
+  clima-pgdata:

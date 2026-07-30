@@ -1,0 +1,17 @@
+{% extends "survey/base.html" %}
+{% block title %}Gracias{% endblock %}
+
+{% block content %}
+<div class="card" style="text-align:center;padding:40px 24px">
+  <span class="eyebrow">{{ org.name }}</span>
+  <h1>Gracias por responder</h1>
+  <p class="lead" style="margin:0 auto">
+    {{ campaign.closing_text or
+       "Tus respuestas quedaron registradas de forma anónima. Los resultados se presentarán
+        de manera agregada, sin identificar a ninguna persona." }}
+  </p>
+  <p class="small muted" style="margin-top:18px">
+    No se muestran resultados de grupos con menos de {{ org.anonymity_threshold }} respuestas.
+  </p>
+</div>
+{% endblock %}
